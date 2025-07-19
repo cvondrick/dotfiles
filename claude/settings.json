@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Bash(uv *)",
+      "Bash(pytest *)",
+      "Bash(ruff *)",
+      "Bash(git *)"
+    ]
+  },
+  "env": {
+    "PYTHON_PACKAGE_MANAGER": "uv",
+    "CLAUDE_NO_EMOJIS": "true",
+    "CLAUDE_USE_RICH": "true"
+  },
+  "cleanupPeriodDays": 30,
+  "includeCoAuthoredBy": true
+}

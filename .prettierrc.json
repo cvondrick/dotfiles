@@ -1,0 +1,14 @@
+{
+    "printWidth": 100,
+    "bracketSameLine": true,
+    "htmlWhitespaceSensitivity": "ignore",
+    "proseWrap": "always",
+    "overrides": [
+        {
+            "files": "*.md",
+            "options": {
+                "proseWrap": "always"
+            }
+        }
+    ]
+}

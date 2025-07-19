@@ -1,0 +1,54 @@
+[user]
+	name = Carl Vondrick
+	email = cvondrick@gmail.com
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = nvim
+
+[pull]
+	rebase = false
+
+[color]
+	ui = auto
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	grep = auto
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = red
+
+[diff]
+	tool = nvimdiff
+
+[difftool]
+	prompt = false
+
+[difftool "nvimdiff"]
+	cmd = nvim -d "$LOCAL" "$REMOTE"
+
+[merge]
+	tool = nvimdiff
+
+[mergetool]
+	prompt = false
+	keepBackup = false
+
+[mergetool "nvimdiff"]
+	cmd = nvim -d "$LOCAL" "$MERGED" "$REMOTE"
+
+[alias]
+	quc = "!f() { git add -u && git commit -m \"${1:-$(git diff --cached --name-only | head -5 | sed 's/^/Update /' | tr '\\n' ', ' | sed 's/, $//')}\"; }; f"
+	qc = "!f() { git commit -m \"${1:-$(git diff --cached --name-only | head -5 | sed 's/^/Update /' | tr '\\n' ', ' | sed 's/, $//')}\"; }; f"
