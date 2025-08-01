@@ -7,6 +7,7 @@
 
 [core]
 	editor = nvim
+	pager = delta
 
 [pull]
 	rebase = false
@@ -41,6 +42,7 @@
 
 [merge]
 	tool = nvimdiff
+	conflictStyle = zdiff3
 
 [mergetool]
 	prompt = false
@@ -52,3 +54,9 @@
 [alias]
 	quc = "!f() { git add -u && git commit -m \"${1:-$(git diff --cached --name-only | head -5 | sed 's/^/Update /' | tr '\\n' ', ' | sed 's/, $//')}\"; }; f"
 	qc = "!f() { git commit -m \"${1:-$(git diff --cached --name-only | head -5 | sed 's/^/Update /' | tr '\\n' ', ' | sed 's/, $//')}\"; }; f"
+[interactive]
+	diffFilter = delta --side-by-side
+[delta]
+	navigate = true
+	side-by-side = none
+	line-numbers = true

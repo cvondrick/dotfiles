@@ -1,4 +1,11 @@
 {
+  "cleanupPeriodDays": 30,
+  "env": {
+    "PYTHON_PACKAGE_MANAGER": "uv",
+    "CLAUDE_NO_EMOJIS": "true",
+    "CLAUDE_USE_RICH": "true"
+  },
+  "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
       "WebFetch(*)",
@@ -9,11 +16,7 @@
       "Bash(git *)"
     ]
   },
-  "env": {
-    "PYTHON_PACKAGE_MANAGER": "uv",
-    "CLAUDE_NO_EMOJIS": "true",
-    "CLAUDE_USE_RICH": "true"
-  },
-  "cleanupPeriodDays": 30,
-  "includeCoAuthoredBy": true
+  "feedbackSurveyState": {
+    "lastShownTime": 1754008060555
+  }
 }

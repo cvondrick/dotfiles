@@ -1,10 +1,12 @@
 vim.loader.enable()
 
--- Use local disk for Neovim data to avoid NFS slowness
-local local_dir = "/tmp/" .. os.getenv("USER") .. "-nvim"
-vim.fn.setenv("XDG_DATA_HOME", local_dir .. "/.local/share")
-vim.fn.setenv("XDG_STATE_HOME", local_dir .. "/.local/state")
-vim.fn.setenv("XDG_CACHE_HOME", local_dir .. "/.cache")
+-- Use local disk for Neovim data to avoid NFS slowness (only on Columbia servers)
+if vim.fn.isdirectory("/proj") == 1 then
+  local local_dir = "/tmp/" .. os.getenv("USER") .. "-nvim"
+  vim.fn.setenv("XDG_DATA_HOME", local_dir .. "/.local/share")
+  vim.fn.setenv("XDG_STATE_HOME", local_dir .. "/.local/state")
+  vim.fn.setenv("XDG_CACHE_HOME", local_dir .. "/.cache")
+end
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -134,30 +136,59 @@ require("lazy").setup({
   },
 
   {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "mason-org/mason.nvim" },
+    opts = {
+      ensure_installed = {
+        "pyright",
+        "ts_ls",
+        "lua_ls",
+        "bashls",
+        "cssls",
+        "html",
+        "jsonls",
+      },
+      automatic_installation = true,
+      automatic_enable = false,  -- Disable automatic setup to prevent duplicates
+    },
+  },
+
+  {
     "neovim/nvim-lspconfig",
+    dependencies = { "williamboman/mason-lspconfig.nvim" },
     config = function()
       local lspconfig = require("lspconfig")
 
       lspconfig.pyright.setup({})
 
-      -- lspconfig.lua_ls.setup({
-      --   on_init = function(client)
-      --     local path = client.workspace_folders[1].name
-      --     if vim.loop.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
-      --       return
-      --     end
-      --
-      --     client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
-      --       runtime = { version = "LuaJIT" },
-      --       -- Make the server aware of Neovim runtime files
-      --       workspace = {
-      --         checkThirdParty = false,
-      --         library = { vim.env.VIMRUNTIME },
-      --       },
-      --     })
-      --   end,
-      --   settings = { Lua = {} },
-      -- })
+      lspconfig.ts_ls.setup({})
+
+      lspconfig.lua_ls.setup({
+        on_init = function(client)
+          local path = client.workspace_folders[1].name
+          if vim.loop.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
+            return
+          end
+
+          client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+            runtime = { version = "LuaJIT" },
+            -- Make the server aware of Neovim runtime files
+            workspace = {
+              checkThirdParty = false,
+              library = { vim.env.VIMRUNTIME },
+            },
+          })
+        end,
+        settings = { Lua = {} },
+      })
+
+      lspconfig.bashls.setup({})
+
+      lspconfig.cssls.setup({})
+
+      lspconfig.html.setup({})
+
+      lspconfig.jsonls.setup({})
 
       vim.diagnostic.config({
         virtual_text = false,
@@ -190,6 +221,7 @@ require("lazy").setup({
             Snacks.picker.lsp_references()
           end, { buffer = event.buf, desc = "LSP: [G]oto [R]eferences", nowait = true })
           map("K", vim.lsp.buf.hover, "Hover Documentation")
+          map("ga", vim.lsp.buf.code_action, "Code [A]ction")
         end,
       })
 
@@ -512,6 +544,19 @@ require("lazy").setup({
         enabled = true,
       },
     },
+    config = function(_, opts)
+      require("snacks").setup(opts)
+      -- Fix picker selection visibility
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "*",
+        callback = function()
+          -- Ensure directory paths are visible in selections
+          vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Directory" })
+        end,
+      })
+      -- Set it immediately as well
+      vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Directory" })
+    end,
     keys = {
       { "<C-f>", function() Snacks.picker.files() end, desc = "Find Files" },
       { "<C-g>", function() Snacks.picker.grep() end, desc = "Grep" },
